@@ -1,0 +1,46 @@
+{% load static %}
+
+<html lang="en">
+    <head>
+        <title>{% block title %}Formula Stats{% endblock %}</title>
+        <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    </head>
+
+    <body class="bg-gray-900 text-gray-100 font-sans leading-relaxed flex flex-col min-h-screen">
+        <nav class="bg-gray-800 p-2 px-4">
+            <div class="flex justify-between items-center">
+                <!-- Left spacer (empty, for balance) -->
+                <div class="w-1/3"></div>
+    
+                <!-- Center title -->
+                <div class="w-1/3 text-center">
+                    <a href="/" class="text-4xl font-semibold text-white">Formula Stats</a>
+                </div>
+    
+                <!-- Right menu -->
+                <div class="w-1/3 flex justify-end space-x-6 text-white">
+                    <a href="/analysis" class="hover:text-gray-300">Analysis</a>
+                    <a href="/drivers" class="hover:text-gray-300">Drivers</a>
+                    <a href="/about" class="hover:text-gray-300">About</a>
+                    <a href="https://buymeacoffee.com/bartosz_tyl" target="_blank" class="hover:text-gray-300">Coffee</a>
+                </div>
+            </div>
+        </nav>
+    
+        <div id="content" name="content" class="flex-grow flex flex-col items-center justify-center text-center p-6">
+            {% block content %}
+            {% endblock %}
+        </div>
+    
+        <footer class="bg-gray-800 text-white py-6 mt-auto">
+            <h3 class="text-center text-xl mb-2 font-bold">Disclaimer</h3>
+            <p class="text-center text-sm text-gray-400 px-4">
+                Formula Stats is a work-in-progress, independent platform, created for educational purposes and is not affiliated with, endorsed by,<br>
+                or in any way officially connected to Formula 1, F1, the FIA (Fédération Internationale de l'Automobile), or any other Formula 1-related entities.<br>
+                All trademarks, logos, team names, driver names are the property of their respective owners.<br>
+                Formula Stats provides data and analysis based on publicly available information and does not represent any official Formula 1 organisation.
+            </p>
+            <p class="text-center text-sm text-gray-400 px-4">Created by Bartosz Tylczyński | Version: 0.1.0 alpha.1</p>
+        </footer>
+    </body>
+</html>
