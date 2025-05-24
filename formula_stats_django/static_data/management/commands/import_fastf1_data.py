@@ -9,7 +9,7 @@ from rapidfuzz import process
 from fastf1.core import Session
 from fastf1.events import EventSchedule, Event
 
-from main_app.models import (
+from static_data.models import (
     Season, Schedule, Constructor, ConstructorColor, Driver, DriverRacingNumber, TyreCompounds, Session, Lap,
     Telemetry, Result, Weather, RaceControlMessage, CarData, PositionData
     )
@@ -142,7 +142,7 @@ class Command(BaseCommand):
             self.constructor_obj, _ = Constructor.objects.get_or_create(name = team)
             
             self.constructor_colors_obj, _ = ConstructorColor.objects.get_or_create(
-                constructor_name = self.constructor_obj,
+                constructor = self.constructor_obj,
                 season_year = self.season_obj,
                 defaults = {
                     "color_official" : plotting.get_team_color(team, session, colormap="official"),

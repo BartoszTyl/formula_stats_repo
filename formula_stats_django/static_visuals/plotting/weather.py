@@ -9,7 +9,7 @@ import pandas as pd
 import io
 import base64
 
-from main_app.models import Schedule, Session, Weather
+from static_data.models import Schedule, Session, Weather
 
 
 
