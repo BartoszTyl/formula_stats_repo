@@ -13,7 +13,7 @@ import numpy as np
 import io
 import base64
 
-from main_app.models import Driver, Schedule, Session, Constructor, ConstructorColor
+from static_data.models import Driver, Schedule, Session, Constructor, ConstructorColor
 
 def plot_name(name):
     def decorator(func):

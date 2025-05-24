@@ -64,7 +64,7 @@ class Constructor(models.Model):
 
 
 class ConstructorColor(models.Model):
-    constructor_name = models.ForeignKey(Constructor, on_delete=models.CASCADE)
+    constructor = models.ForeignKey(Constructor, on_delete=models.CASCADE)
     season_year = models.ForeignKey(Season, on_delete=models.CASCADE)
     color_official = models.CharField(max_length=7, help_text="Hexadecimal color code")
     color_fastf1 = models.CharField(max_length=7, help_text="Hexadecimal color code")

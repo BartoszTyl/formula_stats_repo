@@ -2,16 +2,16 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET
 
-from .models import Season, Schedule, Session, Driver, Lap
+from static_data.models import Season, Schedule, Session, Driver, Lap
 
-from .plotting.team_pace_lap_times import TeamLapVisuals
-from .plotting.weather import WeatherVisuals
-from .plotting.driver_pace_lap_times import DriverLapVisuals
-from .plotting.tyres import TyreVisuals
+from static_visuals.plotting.team_pace_lap_times import TeamLapVisuals
+from static_visuals.plotting.weather import WeatherVisuals
+from static_visuals.plotting.driver_pace_lap_times import DriverLapVisuals
+from static_visuals.plotting.tyres import TyreVisuals
 
 
 def home(request):
-    return render(request, "main_app/home.html")
+    return render(request, "home.html")
 
 
 
@@ -20,12 +20,12 @@ def drivers(request):
     context = {
         "available_drivers": available_drivers,
     }
-    return render(request, "main_app/drivers.html", context)
+    return render(request, "drivers.html", context)
 
 
 
 def about(request):
-    return render(request, "main_app/about.html")
+    return render(request, "about.html")
 
 
 
@@ -132,7 +132,7 @@ def analysis(request):
         "available_laps": available_laps,
     }
 
-    return render(request, "main_app/analysis.html", context)
+    return render(request, "analysis.html", context)
 
 @require_GET
 def get_events(request, year):

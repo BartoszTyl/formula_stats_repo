@@ -13,7 +13,7 @@ import numpy as np
 import io
 import base64
 
-from main_app.models import Result, Lap, ConstructorColor, Constructor, Schedule, Session, TyreCompounds, Driver
+from static_data.models import Result, Lap, ConstructorColor, Constructor, Schedule, Session, TyreCompounds, Driver
 
 def plot_name(name):
     def decorator(func):
@@ -54,7 +54,7 @@ class DriverLapVisuals:
         self._raw_event_details = Schedule.objects.get(id=self.event_id)
         self._raw_session_details = Session.objects.get(id=self.session_id)
         self._raw_constructor = Constructor.objects.values()
-        self._raw_constructor_color = ConstructorColor.objects.filter(season_year=self.year).values("constructor_name", "color_fastf1")
+        self._raw_constructor_color = ConstructorColor.objects.filter(season_year=self.year).values("constructor", "color_fastf1")
         self._raw_tyre_compounds = TyreCompounds.objects.filter(season_year=self.year).values('name', 'color')
 
     def _process_data(self, remove_outliers: bool = True) -> None:
@@ -64,7 +64,7 @@ class DriverLapVisuals:
         
          # Dictionary {"team name": "team color"}
         team_colors_dict = {team_name_dict.get(
-            entry["constructor_name"], entry["constructor_name"]): entry["color_fastf1"] for entry in self._raw_constructor_color}
+            entry["constructor"], entry["constructor"]): entry["color_fastf1"] for entry in self._raw_constructor_color}
         
         # Dictionary {"driver": "team name"}
         driver_constructor_dict = {entry["driver"]: entry["constructor"] for entry in self._raw_results}
