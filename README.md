@@ -6,7 +6,7 @@ A Django-based web application for exploring Formula 1 data. Making F1 data anal
 ## 🚀 Features
 
 - Easily visualise Formula 1 data and telemetry
-- Download your graphics
+- Download your graphics with one click
 
 ## 🔮 Roadmap
 Planned features include:
@@ -100,6 +100,25 @@ To populate the database with missing data, you can use the custom Django manage
 python manage.py import_fastf1_data --year 2024 --event Australia
 ```
 This command fetches and updates the database with all available sessions for the specified event and year.
+
+## 📸 Example Visuals
+### Team Analysis
+<p align="center">
+  <img src="screenshots/team_lap_times_distribution_2025_chinese_grand_prix_race.png" alt="Team Analysis 1" width="45%" />
+  <img src="screenshots/team_avg_pace_comparison_2025_chinese_grand_prix_race.png" alt="Team Analysis 2" width="45%" />
+</p>
+
+### Driver Analysis
+![Driver Analysis](screenshots/driver_lap_time_distribution_2025_chinese_grand_prix_race.png)
+
+### Tyre Analysis
+![Tyre Analysis](screenshots/track_tyre_evolution_2025_chinese_grand_prix_race.png)
+
+### Weather Analysis
+![Weather Analysis](screenshots/weather_data_2025_chinese_grand_prix_race.png)
+
+### 🎥 Walkthrough
+![App Walkthrough](screenshots/demo_walkthrough.gif)
 
 ## ✍🏻 Acknowledgements ##
 This project uses data provided by the FastF1 library, created and maintained by Theo Ehrlich. Huge thanks to the FastF1 community for making detailed F1 data accessible for analysis and visualisation.
