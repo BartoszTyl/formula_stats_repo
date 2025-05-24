@@ -25,6 +25,7 @@ of the foreign keys.
 # TODO Add error logging when importing
 # TODO Change the format in the Schedule model from charfield to integer or bool (0 - convetional, 1 - sprint)
 # TODO Change the name of the column in Constructor model from constructor_name to constructor (it shows id not the name)
+# test
 
 
 class Season(models.Model):
