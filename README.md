@@ -1,18 +1,27 @@
 # 🏎️ Formula Stats
 
-A Django-based web application for exploring Formula 1 data. Making F1 data analytics simple and acccessible. Lightweight site focused on clean, interactive race visuals using telemetry and lap data. Behind the scenes, it runs on a PostgreSQL database storing complete F1 data—from historical race results to detailed car telemetry.
+_"To make Formula 1 data analysis simple and accessible."_
+
+An open source Django-based web application for exploring Formula 1 data. Making F1 data analytics simple and acccessible. Lightweight site focused on clean, race visuals using telemetry and lap data. Behind the scenes, it runs on a PostgreSQL database storing complete F1 data—from historical race results to detailed car telemetry.
+
 **First public release is coming soon!**
 
 ## 🚀 Features
 
-- Easily visualise Formula 1 data and telemetry
-- Download your graphics with one click
+- **Easy Visualisations**: Explore detailed, plots of lap times, telemetry, tyre usage, weather data and more for every race weekend.
+- **Downloadable Graphics**: Export high-quality images of all charts and graphics for easy sharing or further analysis.
+- **Custom Date & Event Filtering**: Select any season, event, or session to tailor your data exploration.
+- **User-Friendly Interface**: Clean, responsive design powered by Tailwind CSS for a seamless experience on desktop and mobile.
+- **Extensible Architecture**: Modular Django app structure enables easy addition of new metrics, visualisations, and data sources.
+- **Command Line Data Import**: Convenient Django management commands automate data importing and updating from FastF1.
+- **Open Source & Community Driven**: Contributions are welcome to expand features, fix bugs, and improve documentation.
 
 ## 🔮 Roadmap
 Planned features include:
-- Predictive race modeling
-- Driver/team comparison tool
-- Advanced statistics, graphics and more!
+- **Predictive Race Modelling**: Implement machine learning algorithms to forecast race outcomes, pit stop strategies, and driver performance under varying conditions.
+- **Enhanced Driver and Team Comparison Tools**: Interactive dashboards to compare driver and constructor stats across multiple seasons, tracks, and race sessions with detailed visual insights.
+- **Advanced Statistics and Metrics**: Incorporate deeper performance indicators such as stint analysis, tyre degradation models, sector performance trends, and aerodynamic efficiency metrics.
+- **Live Data Integration**: Explore options to integrate near real-time telemetry and race data during live events for up-to-the-minute analysis.
 
 ## 🛠 Tech Stack
 
