@@ -40,7 +40,7 @@ formula_stats_django/                      # Main Django project folder
 │   ├── settings.py                        # Project settings
 │   ├── urls.py                            # Root URL routing
 │   └── wsgi.py
-
+│
 ├── frontend/                              # Frontend app: templates, views, UI logic
 │   ├── templates/                         # HTML templates
 │   │   ├── about.html
@@ -55,7 +55,7 @@ formula_stats_django/                      # Main Django project folder
 │   ├── apps.py
 │   ├── urls.py
 │   └── views.py
-
+│
 ├── static_data/                           # Backend app: models and data ingestion
 │   ├── management/commands/               # Custom Django management commands
 │   │   └── import_fastf1_data.py
@@ -63,7 +63,7 @@ formula_stats_django/                      # Main Django project folder
 │   ├── __init__.py
 │   ├── apps.py
 │   └── models.py
-
+│
 ├── static_visuals/                        # Plotting and visualisation logic
 │   ├── plotting/                          # Modular scripts for different plots
 │   │   ├── driver_pace_lap_times.py
@@ -73,7 +73,7 @@ formula_stats_django/                      # Main Django project folder
 │   │   └── weather.py
 │   ├── __init__.py
 │   └── apps.py
-
+│
 ├── manage.py                              # Django CLI entry point
 ├── screenshots/                           # Screenshots and walkthroughs
 ├── .gitignore                             # Git ignore rules
