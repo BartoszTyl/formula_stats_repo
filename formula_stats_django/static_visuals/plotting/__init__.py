@@ -17,7 +17,7 @@ SNS_BOXPLOT_STYLE = {
 }
 
 
-def format_lap_time(ms):
+def format_lap_time(ms: int) -> str:
     """Format time in milliseconds to m:ss:mmm"""
     # Convert milliseconds to seconds
     minutes = ms // 60000  # 1 minute = 60,000 milliseconds
@@ -28,6 +28,15 @@ def format_lap_time(ms):
     formatted_time = f"{int(minutes):01}:{int(seconds):02}:{int(milliseconds):03}"
     
     return formatted_time
+
+
+
+
+def drs_to_boolean(drs_value) -> bool:
+    """Convert DRS value to boolean"""
+    
+    return drs_value in [10, 12, 14]
+ 
     
 
 

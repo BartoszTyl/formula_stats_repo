@@ -8,6 +8,7 @@ from static_visuals.plotting.team_pace_lap_times import TeamLapVisuals
 from static_visuals.plotting.weather import WeatherVisuals
 from static_visuals.plotting.driver_pace_lap_times import DriverLapVisuals
 from static_visuals.plotting.tyres import TyreVisuals
+from static_visuals.plotting.telemetry import TelemetryVisuals
 
 
 def home(request):
@@ -38,7 +39,7 @@ def analysis(request):
     selected_session_id = None
     selected_visual = None
     selected_driver_id = None
-    selected_lap_number = None
+    selected_lap_id = None
     event_name = None
     session_type = None
     plots = []
@@ -55,7 +56,7 @@ def analysis(request):
         selected_session_id = request.POST.get("session_id")
         selected_visual = request.POST.get("visual")
         selected_driver_id = request.POST.get("driver")
-        selected_lap_number = request.POST.get("lap")
+        selected_lap_id = request.POST.get("lap")
 
         if selected_year:
             event_ids_with_sessions = Session.objects.values_list("event_id", flat=True).distinct()
@@ -92,6 +93,9 @@ def analysis(request):
                     plotter = WeatherVisuals(selected_year, selected_event_id, selected_session_id)
                 elif selected_visual == "Tyres":
                     plotter = TyreVisuals(selected_year, selected_event_id, selected_session_id)
+                elif selected_visual == "Telemetry":
+                    plotter = TelemetryVisuals(
+                        selected_year, selected_event_id, selected_session_id, selected_driver_id, selected_lap_id)
                 else:
                     plotter = None
 
@@ -127,11 +131,11 @@ def analysis(request):
         "plots": plots,
         "selected_visual_names": selected_visual_names,
         "selected_driver_id": selected_driver_id,
-        "selected_lap_number": selected_lap_number,
+        "selected_lap_id": selected_lap_id,
         "available_drivers": available_drivers,
         "available_laps": available_laps,
     }
-
+    
     return render(request, "analysis.html", context)
 
 @require_GET
@@ -154,5 +158,5 @@ def get_drivers(request, session_id):
 
 @require_GET
 def get_laps(request, session_id, driver_id):
-    laps = Lap.objects.filter(session_id=session_id, driver_id=driver_id).values("lap_number").order_by("lap_number").distinct()
+    laps = Lap.objects.filter(session_id=session_id, driver_id=driver_id).values("lap_number", "id").order_by("lap_number").distinct()
     return JsonResponse({"laps": list(laps)})

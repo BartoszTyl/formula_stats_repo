@@ -48,18 +48,14 @@
         <select name="driver" id="driver-select" class="bg-gray-700 text-white p-2 rounded hidden">
             <option value="" disabled {% if not selected_visual %}selected{% endif %}>Select a driver:</option>
             {% for driver in available_drivers %}
-                <option value="{{ driver.abbreviation }}" {% if driver.abbreviation == selected_driver %}selected{% endif %}>
-                    {% comment %} {{ driver.abbreviation }} {% endcomment %}
-                </option>
+                <option value="{{ driver.abbreviation }}" {% if driver.abbreviation == selected_driver %}selected{% endif %}>{{ driver.abbreviation }}</option>
             {% endfor %}
         </select>
 
         <select name="lap" id="lap-select" class="bg-gray-700 text-white p-2 rounded hidden" {% if not available_laps %}disabled{% endif %}>
             <option value="" disabled {% if not selected_lap %}selected{% endif %}>Select a lap:</option>
             {% for lap in available_laps %}
-                <option value="{{ lap.number }}" {% if lap.number == selected_lap %}selected{% endif %}>
-                    {% comment %} Lap {{ lap.number }} {% endcomment %}
-                </option>
+                <option value="{{ lap.number }}" {% if lap.number == selected_lap %}selected{% endif %}>{{ lap.number }}</option>1
             {% endfor %}
         </select>
 
@@ -99,6 +95,9 @@
 {% endif %}
 
 <script>
+    // FIXME driver and lap buttons disappear after clicking load.
+    // TODO only allow choice of visual after the session was selected.
+    
     const yearSelect = document.getElementById("year-select");
     const eventSelect = document.getElementById("event-select");
     const sessionSelect = document.getElementById("session-select");
@@ -107,18 +106,51 @@
     const lapSelect = document.getElementById("lap-select");
     const loadButton = document.getElementById("load-button");
 
-    function updateButtonState() {
-        if (
-            yearSelect.value &&
-            eventSelect.value &&
-            sessionSelect.value &&
-            visualSelect.value
-        ) {
-            loadButton.disabled = false;
-        } else {
-            loadButton.disabled = true;
-        }
-    }
+function updateButtonState() {
+    if (
+        yearSelect.value &&
+        eventSelect.value &&
+        sessionSelect.value &&
+        visualSelect.value)
+        {loadButton.disabled = false;
+        } else {loadButton.disabled = true;}
+}
+
+    if (visualSelect.value === "Telemetry") {
+            // Reset and show driver/lap selects
+            driverSelect.classList.remove("hidden");
+            lapSelect.classList.remove("hidden");
+
+            // Reset driverSelect
+            driverSelect.innerHTML = "";
+            const driverPlaceholder = document.createElement("option");
+            driverPlaceholder.value = "";
+            driverPlaceholder.textContent = "Select a driver:";
+            driverPlaceholder.disabled = true;
+            driverPlaceholder.selected = true;
+            driverSelect.appendChild(driverPlaceholder);
+
+            // Reset lapSelect
+            lapSelect.innerHTML = "";
+            const lapPlaceholder = document.createElement("option");
+            lapPlaceholder.value = "";
+            lapPlaceholder.textContent = "Select a lap:";
+            lapPlaceholder.disabled = true;
+            lapPlaceholder.selected = true;
+            lapSelect.appendChild(lapPlaceholder);
+            lapSelect.disabled = true;
+
+            fetch(`/ajax/get-drivers/${sessionSelect.value}/`)
+                .then(response => response.json())
+                .then(data => {
+                    data.drivers.forEach(driver => {
+                        const opt = document.createElement("option");
+                        opt.value = driver.id;
+                        opt.textContent = driver.abbreviation;
+                        driverSelect.appendChild(opt);
+                    });
+                });
+            }
 
     yearSelect.addEventListener("change", function () {
         fetch(`/get-events/${this.value}/`)
@@ -217,39 +249,8 @@
         }
 
         updateButtonState();
+
     });
-
-
-    {% comment %} visualSelect.addEventListener("change", function () {
-        if (visualSelect.value === "Telemetry") {
-            fetch(`/ajax/get-drivers/${sessionSelect.value}/`)
-                .then(response => response.json())
-                .then(data => {
-                    driverSelect.classList.remove("hidden");
-                    lapSelect.classList.remove("hidden");
-                    driverSelect.innerHTML = "";
-                    const placeholder = document.createElement("option");
-                    placeholder.value = "";
-                    placeholder.textContent = "Select a driver:";
-                    placeholder.disabled = true;
-                    placeholder.selected = true;
-
-                    driverSelect.appendChild(placeholder);
-
-                    data.drivers.forEach(driver => {
-                        const opt = document.createElement("option");
-                        opt.value = driver.id;
-                        opt.textContent = driver.abbreviation;
-                        driverSelect.appendChild(opt);
-                    });
-
-                })} else {
-                    driverSelect.classList.add("hidden");
-                    lapSelect.classList.add("hidden");
-                    lapSelect.disabled = true;
-                };
-        
-    }); {% endcomment %}
 
     driverSelect.addEventListener("change", function () {
         fetch(`/ajax/get-laps/${sessionSelect.value}/${this.value}/`)
@@ -277,7 +278,7 @@
             });
     });
 
-    [yearSelect, eventSelect, sessionSelect, visualSelect, driverSelect].forEach(select =>
+    [yearSelect, eventSelect, sessionSelect, visualSelect, driverSelect, lapSelect].forEach(select =>
         select.addEventListener("change", updateButtonState)
     );
 
