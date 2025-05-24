@@ -1,14 +1,15 @@
 # 🏎️ Formula Stats
 
-A Django-based web application for exploring Formula 1 data. Making F1 data analytics simple and acccessible.
+A Django-based web application for exploring Formula 1 data. Making F1 data analytics simple and acccessible. Lightweight site focused on clean, interactive race visuals using telemetry and lap data. Behind the scenes, it runs on a PostgreSQL database storing complete F1 data—from historical race results to detailed car telemetry.
+**First public release is coming soon!**
 
 ## 🚀 Features
 
-- Visualise Formula 1 data and telemetry
-- Organised Django structure for scalability
-- Future plans: machine learning insights, race strategy simulation
+- Easily visualise Formula 1 data and telemetry
+- Download your graphics
 
 ## 🔮 Roadmap
+Planned features include:
 - Predictive race modeling
 - Driver/team comparison tool
 - Advanced statistics, graphics and more!
@@ -74,3 +75,43 @@ A Django-based web application for exploring Formula 1 data. Making F1 data anal
 ├── requirements.txt                            # Python package dependencies
 └── README.md                                  
 ```
+
+## 🗃️ Database Schema
+You can view the full interactive database schema on dbdiagram.io: 🔗 [Click here to view the schema](https://dbdiagram.io/d/Formula-Stats-DB-67f1919a4f7afba1847a317f)
+
+## 🧰 Dependencies
+Install required packages with:
+```
+pip install -r requirements.txt
+```
+
+## 🤝 Contributing
+Pull requests are welcome! For major changes, please open an issue first to discuss what you'd like to change.
+
+## ▶️ Running the App
+Navigate to the correct directory and launch the app with:
+```
+python manage.py runserver
+```
+
+## 📥 Imporing Data to the Database
+To populate the database with missing data, you can use the custom Django management command. For example, to import data for the 2024 Australian Grand Prix, run:
+```
+python manage.py import_fastf1_data --year 2024 --event Australia
+```
+This command fetches and updates the database with all available sessions for the specified event and year.
+
+## ✍🏻 Acknowledgements ##
+This project uses data provided by the FastF1 library, created and maintained by Theo Ehrlich. Huge thanks to the FastF1 community for making detailed F1 data accessible for analysis and visualisation.
+
+## 👨🏻‍💻 Author
+Bartosz Tylczynski – UoL Computer Science student, Formula 1 strategy & data enthusiast.
+
+## 📄 License
+MIT License – feel free to use, adapt, and expand this project. Credit required.
+
+## ‼️ Disclaimer
+Formula Stats is a work-in-progress, independent platform, created for educational purposes and is not affiliated with, endorsed by,
+or in any way officially connected to Formula 1, F1, the FIA (Fédération Internationale de l'Automobile), or any other Formula 1-related entities.
+All trademarks, logos, team names, driver names are the property of their respective owners.
+Formula Stats provides data and analysis based on publicly available information and does not represent any official Formula 1 organisation.
