@@ -80,6 +80,8 @@ Planned features include:
 │   │
 │   └── manage.py                               # Django project entry point
 │
+├── screenshots/                                # Screenshots and demo walkthrough
+│
 ├── .gitignore                                  # Git ignore rules
 ├── requirements.txt                            # Python package dependencies
 └── README.md                                  
