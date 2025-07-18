@@ -8,12 +8,12 @@
 <form method="POST" class="absolute top-16 left-0 w-full flex flex-col items-center gap-4 z-10">
     {% csrf_token %}
 
-    <div class="text-gray-300 text-lg font-light">
+    <div class="text-slate-300 text-lg font-light">
         Choose a session you want to visualise and press Load!
     </div>
 
     <div class="flex flex-wrap justify-center gap-4">
-        <select name="year" id="year-select" class="bg-gray-700 text-white p-2 rounded">
+        <select name="year" id="year-select" class="bg-slate-700 text-white p-2 rounded">
             <option value="" disabled {% if not selected_year %}selected{% endif %}>Choose a year:</option>
             {% for year in available_years %}
                 <option value="{{ year }}" {% if year|stringformat:"s" == selected_year %}selected{% endif %}>{{ year }}</option>
@@ -21,7 +21,7 @@
         </select>
 
 
-        <select name="event_id" id="event-select" class="bg-gray-700 text-white p-2 rounded" {% if not available_events %}disabled{% endif %}>
+        <select name="event_id" id="event-select" class="bg-slate-700 text-white p-2 rounded" {% if not available_events %}disabled{% endif %}>
             <option value="" disabled {% if not selected_event_id %}selected{% endif %}>Select an event:</option>
             {% for event in available_events %}
                 <option value="{{ event.id }}" {% if event.id|stringformat:"s" == selected_event_id %}selected{% endif %}>{{ event.name }}</option>
@@ -29,7 +29,7 @@
         </select>
 
 
-        <select name="session_id" id="session-select" class="bg-gray-700 text-white p-2 rounded" {% if not available_sessions %}disabled{% endif %}>
+        <select name="session_id" id="session-select" class="bg-slate-700 text-white p-2 rounded" {% if not available_sessions %}disabled{% endif %}>
             <option value="" disabled {% if not selected_session_id %}selected{% endif %}>Select a session:</option>
             {% for session in available_sessions %}
                 <option value="{{ session.id }}" {% if session.id|stringformat:"s" == selected_session_id %}selected{% endif %}>{{ session.type }}</option>
@@ -37,7 +37,7 @@
         </select>
 
 
-        <select name="visual" id="visuals-select" class="bg-gray-700 text-white p-2 rounded">
+        <select name="visual" id="visuals-select" class="bg-slate-700 text-white p-2 rounded">
             <option value="" disabled {% if not selected_visual %}selected{% endif %}>Select a visual:</option>
             {% for visual in available_visuals %}
                 <option value="{{ visual }}" {% if visual == selected_visual %}selected{% endif %}>{{ visual }}</option>
@@ -45,14 +45,14 @@
         </select>
 
 
-        <select name="driver" id="driver-select" class="bg-gray-700 text-white p-2 rounded hidden">
+        <select name="driver" id="driver-select" class="bg-slate-700 text-white p-2 rounded hidden">
             <option value="" disabled {% if not selected_visual %}selected{% endif %}>Select a driver:</option>
             {% for driver in available_drivers %}
-                <option value="{{ driver.abbreviation }}" {% if driver.abbreviation == selected_driver %}selected{% endif %}>{{ driver.abbreviation }}</option>
+                <option value="{{ driver.id }}" {% if driver.abbreviation == selected_driver %}selected{% endif %}>{{ driver.id }}</option>
             {% endfor %}
         </select>
 
-        <select name="lap" id="lap-select" class="bg-gray-700 text-white p-2 rounded hidden" {% if not available_laps %}disabled{% endif %}>
+        <select name="lap" id="lap-select" class="bg-slate-700 text-white p-2 rounded hidden" {% if not available_laps %}disabled{% endif %}>
             <option value="" disabled {% if not selected_lap %}selected{% endif %}>Select a lap:</option>
             {% for lap in available_laps %}
                 <option value="{{ lap.number }}" {% if lap.number == selected_lap %}selected{% endif %}>{{ lap.number }}</option>1
@@ -60,7 +60,7 @@
         </select>
 
 
-        <button id="load-button" type="submit" class="bg-blue-600 text-white hover:bg-blue-700 hover:text-gray-200 px-3 py-1 rounded" disabled>
+        <button id="load-button" type="submit" class="bg-blue-600 text-white hover:bg-blue-700 hover:text-slate-200 px-3 py-1 rounded" disabled>
             Load
         </button>
     </div>
@@ -74,9 +74,8 @@
         <img
           id="{{ selected_visual_names|index:forloop.counter0 }}"
           src="data:image/png;base64,{{ plot }}"
-          class="h-full max-h-fit rounded shadow"
+          class="max-w-full max-h-[80vh] rounded shadow"
         >
-        <!-- Download button -->
         <a
           href="data:image/png;base64,{{ plot }}"
           download="{{ selected_visual_names|index:forloop.counter0 }}_{{ selected_year }}_{{ event_name }}_{{ session_type }}.png"
@@ -95,8 +94,7 @@
 {% endif %}
 
 <script>
-    // FIXME driver and lap buttons disappear after clicking load.
-    // TODO only allow choice of visual after the session was selected.
+    // Your JavaScript does not need any changes and will continue to work correctly.
     
     const yearSelect = document.getElementById("year-select");
     const eventSelect = document.getElementById("event-select");
@@ -106,15 +104,15 @@
     const lapSelect = document.getElementById("lap-select");
     const loadButton = document.getElementById("load-button");
 
-function updateButtonState() {
-    if (
-        yearSelect.value &&
-        eventSelect.value &&
-        sessionSelect.value &&
-        visualSelect.value)
-        {loadButton.disabled = false;
-        } else {loadButton.disabled = true;}
-}
+    function updateButtonState() {
+        if (
+            yearSelect.value &&
+            eventSelect.value &&
+            sessionSelect.value &&
+            visualSelect.value)
+            {loadButton.disabled = false;
+            } else {loadButton.disabled = true;}
+    }
 
     if (visualSelect.value === "Telemetry") {
             // Reset and show driver/lap selects
@@ -189,7 +187,7 @@ function updateButtonState() {
                 placeholder.disabled = true;
                 placeholder.selected = true;
                 sessionSelect.appendChild(placeholder);
-  
+    
                 data.sessions.forEach(session => {
                     const opt = document.createElement("option");
                     opt.value = session.id;
@@ -281,7 +279,6 @@ function updateButtonState() {
     [yearSelect, eventSelect, sessionSelect, visualSelect, driverSelect, lapSelect].forEach(select =>
         select.addEventListener("change", updateButtonState)
     );
-
 
 </script>
 

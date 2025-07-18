@@ -2,20 +2,23 @@ import fastf1 as ff1
 from fastf1 import plotting
 import pandas as pd
 import pycountry
+import logging
 import time
 from django.utils.timezone import make_aware
 from datetime import datetime, timezone
 from rapidfuzz import process
 from fastf1.core import Session
-from fastf1.events import EventSchedule, Event
+# from fastf1.events import EventSchedule, Event
 
 from static_data.models import (
-    Season, Schedule, Constructor, ConstructorColor, Driver, DriverRacingNumber, TyreCompounds, Session, Lap,
-    Telemetry, Result, Weather, RaceControlMessage, CarData, PositionData
+    Season, Event, Constructor, ConstructorColor, Driver, DriverRacingNumber, TyreCompounds, Session, Lap,
+    Telemetry, Result, Weather, RaceControlMessage, CarData, PositionData, Circuit
     )
 from django.core.management.base import BaseCommand
 
 # * python manage.py import_fastf1_data --year 2024 --event Australia
+
+logger = logging.getLogger(__name__)
 
 class Command(BaseCommand):
     help = "Import F1 data into the database based on the FastF1 data."
@@ -63,15 +66,16 @@ class Command(BaseCommand):
 
 
     def populate_data(self, year: int, event: str):
-        # Your actual data population logic goes here
         self.populate_seasons(year)
         
         loaded_session = ff1.get_session(year, event, 1)
         loaded_session.load()
-        loaded_schedule = ff1.get_event_schedule(year)
+        
+        # loaded_schedule = ff1.get_event_schedule(year)
         loaded_event = ff1.get_event(year, event)
         
-        self.populate_schedule(year, loaded_schedule)
+        self.populate_circuit(loaded_session)
+        self.populate_event(year, loaded_event)
         self.populate_tyre_compounds(year, loaded_session)
         self.populate_constructors(year, loaded_session)
         
@@ -97,25 +101,34 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS(f"Season {year} created successfully!"))
         
         return self.season_obj
-        
+    
+    
+    # Populate circuit data
+    def populate_circuit(self, session: Session) -> Circuit:
+        self.circuit_obj, _ = Circuit.objects.get_or_create(
+            name = session.session_info['Meeting']['Circuit']['ShortName'],
+            rotation = session.get_circuit_info().rotation,
+            country = session.session_info['Meeting']['Country']['Code'],
+            location = session.session_info['Meeting']['Location']
+        )
+        self.stdout.write(self.style.SUCCESS(f"Circuit data for {session.session_info['Meeting']['Circuit']['ShortName']} created successfully!"))
+        return self.circuit_obj
     
     # Populate schedule
-    def populate_schedule(self, year:int, schedule: EventSchedule) -> Schedule:
-        for _, row in schedule.iterrows():
-            self.schedule_obj, _ = Schedule.objects.get_or_create(
-                season_year = self.season_obj,
-                round_number = row["RoundNumber"],
-                defaults = {
-                    "country" : pycountry.countries.get(name=row["Country"]).alpha_3,
-                    "location" : row["Location"],
-                    "date_utc" : row["EventDate"],
-                    "name" : row["EventName"],
-                    "format" : row["EventFormat"].replace("_", " ").title()
-                }
-            )
-        self.stdout.write(self.style.SUCCESS(f"Schedule data for {year} created successfully!"))
+    def populate_event(self, year:int, event) -> Event:
+        self.event_obj, _ = Event.objects.get_or_create(
+            season_year = self.season_obj,
+            round_number = event["RoundNumber"],
+            defaults = {
+                "date_utc" : event["EventDate"],
+                "name" : event["EventName"],
+                'circuit' : self.circuit_obj,
+                "format" : event["EventFormat"].replace("_", " ").title()
+            }
+        )
+        self.stdout.write(self.style.SUCCESS(f"Event data for {year} created successfully!"))
         
-        return self.schedule_obj
+        return self.event_obj
 
 
     # Populate tyre compounds
@@ -182,7 +195,7 @@ class Command(BaseCommand):
         end = make_aware(session.session_info["EndDate"] - session.session_info["GmtOffset"], timezone.utc)
 
         self.session_obj, _ = Session.objects.get_or_create(
-            event = Schedule.objects.get(season_year = year, name = event["EventName"]),
+            event = Event.objects.get(season_year = year, name = event["EventName"]),
             type = event[f"Session{i}"],
             defaults = {
                 "scheduled_start_timestamp_utc" : scheduled,
@@ -336,7 +349,8 @@ class Command(BaseCommand):
                 try:
                     pos_data = lap_data.get_pos_data()
                 except Exception as e:
-                    self.stdout.write(self.style.WARNING(f"Skipping lap {lap_number} for driver {driver} due to error: {e}"))
+                    self.stdout.write(self.style.WARNING(f"Skipping pos data lap {lap_number} for driver {driver} due to error: {e}"))
+                    logger.warning(f"Skipping pos data lap {lap_number} for driver {driver} due to error: {e}")
                     continue
                 
                 self.stdout.write(self.style.NOTICE(f"Creating positional data for lap number {lap_number}..."))
@@ -406,7 +420,8 @@ class Command(BaseCommand):
                 try:
                     car_data = lap_data.get_car_data()
                 except Exception as e:
-                    self.stdout.write(self.style.WARNING(f"Skipping lap {lap_number} for driver {driver} due to error: {e}"))
+                    self.stdout.write(self.style.WARNING(f"Skipping car data lap {lap_number} for driver {driver} due to error: {e}"))
+                    logger.warning(f"Skipping car data lap {lap_number} for driver {driver} due to error: {e}")
                     continue
                 self.stdout.write(self.style.NOTICE(f"Creating car data for lap number {lap_number}..."))
                 
@@ -476,7 +491,8 @@ class Command(BaseCommand):
                 try:
                     telemetry_data = lap_data.get_telemetry().add_differential_distance().add_distance().add_driver_ahead().add_relative_distance()
                 except Exception as e:
-                    self.stdout.write(self.style.WARNING(f"Skipping lap {lap_number} for driver {driver} due to error: {e}"))
+                    self.stdout.write(self.style.WARNING(f"Skipping telemetry lap {lap_number} for driver {driver} due to error: {e}"))
+                    logger.warning(f"Skipping telemetry lap {lap_number} for driver {driver} due to error: {e}")
                     continue
                 self.stdout.write(self.style.NOTICE(f"Creating telemetry data for lap number {lap_number}..."))
                 

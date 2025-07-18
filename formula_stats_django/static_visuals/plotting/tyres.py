@@ -13,7 +13,7 @@ import numpy as np
 import io
 import base64
 
-from static_data.models import Lap, TyreCompounds, Session, Schedule
+from static_data.models import Lap, TyreCompounds, Session, Event
 
 def plot_name(name):
     def decorator(func):
@@ -38,7 +38,7 @@ class TyreVisuals:
         """Fetch all necessary raw data from the database"""
         self._raw_laps = Lap.objects.filter(session=self.session_id).values('lap_number', "lap_time", "compound")
         self._raw_tyre_compounds = TyreCompounds.objects.filter(season_year=self.year).values('name', 'color')
-        self._raw_event_details = Schedule.objects.get(id=self.event_id)
+        self._raw_event_details = Event.objects.get(id=self.event_id)
         self._raw_session_details = Session.objects.get(id=self.session_id)
     
     def _process_data(self, remove_outliers: bool = True) -> None:
@@ -69,7 +69,7 @@ class TyreVisuals:
 
         for compound in grouped["compound"].unique():
             compound_data = grouped[grouped["compound"] == compound]
-            color = self.tyre_colors_dict.get(compound, "black")  # fallback to black if compound not found
+            color = self.tyre_colors_dict.get(compound, "grey")  # fallback to black if compound not found
             ax.plot(compound_data["lap_number"], compound_data["lap_time"], label=compound, color=color)
 
         # X-axis customization
@@ -91,7 +91,22 @@ class TyreVisuals:
         ax.grid(True, alpha=0.5)
         fig.tight_layout()
         
-        
+        for compound in grouped["compound"].unique():
+            compound_data = grouped[grouped["compound"] == compound]
+            color = self.tyre_colors_dict.get(compound, "grey")
+
+            # Plot actual median lap times
+            ax.plot(compound_data["lap_number"], compound_data["lap_time"], label=compound, color=color)
+
+            # Linear regression (1st degree polynomial fit)
+            x = compound_data["lap_number"]
+            y = compound_data["lap_time"]
+            coeffs = np.polyfit(x, y, deg=1)
+            trendline = np.poly1d(coeffs)
+            
+            # Plot the regression line
+            ax.plot(x, trendline(x), linestyle="--", color=color, alpha=0.7)
+
         
         # Add the watermark
         add_watermark(fig, alpha=0.35)

@@ -30,19 +30,28 @@ class Season(models.Model):
         db_table = "seasons"
 
 
-class Schedule(models.Model):
-    season_year = models.ForeignKey(Season,  on_delete=models.CASCADE)
-    round_number = models.IntegerField()
+class Circuit(models.Model):
+    name = models.CharField(max_length=255)
+    rotation = models.IntegerField(null=True)
     country = models.CharField(max_length=3, null=True)
     location = models.CharField(max_length=60)
+    
+    class Meta:
+        db_table = 'circuits'
+        
+
+class Event(models.Model):
+    season_year = models.ForeignKey(Season,  on_delete=models.CASCADE)
+    circuit = models.ForeignKey(Circuit, on_delete=models.PROTECT, related_name="events")
+    round_number = models.IntegerField()
     date_utc = models.DateField()
     name = models.CharField()
     format = models.CharField()
     
     class Meta:
-        db_table = "schedules"
-    
-        
+        db_table = "events"
+
+  
 class TyreCompounds(models.Model):
     name = models.CharField(max_length=25)
     color = models.CharField(max_length=7, help_text="Hexadecimal color code")
@@ -89,7 +98,7 @@ class DriverRacingNumber(models.Model):
 
 
 class Session(models.Model):
-    event = models.ForeignKey(Schedule, on_delete=models.CASCADE)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
     type = models.CharField(max_length=50)
     scheduled_start_timestamp_utc = models.DateTimeField()
     actual_start_timestamp_utc = models.DateTimeField()

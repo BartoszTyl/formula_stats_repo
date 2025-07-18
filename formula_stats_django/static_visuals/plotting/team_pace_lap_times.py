@@ -12,7 +12,7 @@ import numpy as np
 import io
 import base64
 
-from static_data.models import Result, Lap, ConstructorColor, Constructor, Schedule, Session, TyreCompounds
+from static_data.models import Result, Lap, ConstructorColor, Constructor, Event, Session, TyreCompounds
 
 def plot_name(name):
     def decorator(func):
@@ -51,7 +51,7 @@ class TeamLapVisuals:
         """Fetch all necessary raw data from the database"""
         self._raw_laps = Lap.objects.filter(session=self.session_id).values("lap_time", "driver", "compound")
         self._raw_results = Result.objects.filter(session=self.session_id).values("id", "position", "classified_position", "constructor", "driver")
-        self._raw_event_details = Schedule.objects.get(id=self.event_id)
+        self._raw_event_details = Event.objects.get(id=self.event_id)
         self._raw_session_details = Session.objects.get(id=self.session_id)
         self._raw_constructor = Constructor.objects.values("id", "name")
         self._raw_constructor_color = ConstructorColor.objects.filter(season_year=self.year).values("constructor", "color_fastf1")
@@ -190,7 +190,7 @@ class TeamLapVisuals:
                 "constructor_color": 'first'
             }).reset_index()
         
-        results_df = results_df.sort_values(by="perc_diff_avg_lap")
+        results_df = results_df.sort_values(by="constructor_avg_lap")
         
         fig, ax = plt.subplots(figsize=(12.8, 7.2), dpi=300)
         

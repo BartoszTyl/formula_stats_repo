@@ -13,7 +13,7 @@ import numpy as np
 import io
 import base64
 
-from static_data.models import Result, Lap, ConstructorColor, Constructor, Schedule, Session, TyreCompounds, Driver
+from static_data.models import Result, Lap, ConstructorColor, Constructor, Event, Session, TyreCompounds, Driver
 
 def plot_name(name):
     def decorator(func):
@@ -51,7 +51,7 @@ class DriverLapVisuals:
         self._raw_laps = Lap.objects.filter(session=self.session_id).values("lap_time", "driver")
         self._raw_results = Result.objects.filter(session=self.session_id).values("id", "position","classified_position", "constructor", "driver")
         self._raw_driver_details = Driver.objects.values('id', 'abbreviation')
-        self._raw_event_details = Schedule.objects.get(id=self.event_id)
+        self._raw_event_details = Event.objects.get(id=self.event_id)
         self._raw_session_details = Session.objects.get(id=self.session_id)
         self._raw_constructor = Constructor.objects.values()
         self._raw_constructor_color = ConstructorColor.objects.filter(season_year=self.year).values("constructor", "color_fastf1")

@@ -9,7 +9,7 @@ import pandas as pd
 import io
 import base64
 
-from static_data.models import Schedule, Session, Weather
+from static_data.models import Event, Session, Weather
 
 
 
@@ -47,7 +47,7 @@ class WeatherVisuals:
     def _load_data(self):
         """Fetch all necessary raw data from the database"""
         self._raw_weather = Weather.objects.filter(session=self.session_id).values()
-        self._raw_event_details = Schedule.objects.get(id=self.event_id)
+        self._raw_event_details = Event.objects.get(id=self.event_id)
         self._raw_session_details = Session.objects.get(id=self.session_id)
     
     def _process_data(self):

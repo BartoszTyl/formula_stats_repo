@@ -71,6 +71,7 @@ htmlcov/
 .mypy_cache/
 .dmypy.json
 dmypy.json
+testing.ipynb
 
 # === Docs ===
 docs/_build/

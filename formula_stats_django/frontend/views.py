@@ -2,13 +2,14 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET
 
-from static_data.models import Season, Schedule, Session, Driver, Lap
+from static_data.models import Season, Event, Session, Driver, Lap
 
 from static_visuals.plotting.team_pace_lap_times import TeamLapVisuals
 from static_visuals.plotting.weather import WeatherVisuals
 from static_visuals.plotting.driver_pace_lap_times import DriverLapVisuals
 from static_visuals.plotting.tyres import TyreVisuals
 from static_visuals.plotting.telemetry import TelemetryVisuals
+from static_visuals.plotting.performance import PerformanceVisuals
 
 
 def home(request):
@@ -32,7 +33,7 @@ def about(request):
 
 def analysis(request):
     available_years = Season.objects.values_list("year", flat=True).distinct().order_by("-year")
-    available_visuals = ["Team Pace/Lap Times", "Drivers Pace/Lap Times", "Weather Data", "Telemetry", "Tyres"]
+    available_visuals = ["Team Pace/Lap Times", "Drivers Pace/Lap Times", "Weather Data", "Telemetry", "Tyres", 'Performance']
 
     selected_year = None
     selected_event_id = None
@@ -60,7 +61,7 @@ def analysis(request):
 
         if selected_year:
             event_ids_with_sessions = Session.objects.values_list("event_id", flat=True).distinct()
-            available_events = Schedule.objects.filter(
+            available_events = Event.objects.filter(
                 season_year=selected_year, id__in=event_ids_with_sessions
             ).values("id", "name")
 
@@ -68,7 +69,7 @@ def analysis(request):
             available_sessions = Session.objects.filter(event=selected_event_id).values("id", "type")
 
         if selected_event_id and selected_session_id:
-            event_name = Schedule.objects.get(id=selected_event_id).name.lower().replace(" ", "_")
+            event_name = Event.objects.get(id=selected_event_id).name.lower().replace(" ", "_")
             session_type = Session.objects.get(id=selected_session_id).type.lower()
             available_drivers = (
                 Driver.objects.filter(lap__session_id=selected_session_id)
@@ -96,6 +97,8 @@ def analysis(request):
                 elif selected_visual == "Telemetry":
                     plotter = TelemetryVisuals(
                         selected_year, selected_event_id, selected_session_id, selected_driver_id, selected_lap_id)
+                elif selected_visual == 'Performance':
+                    plotter = PerformanceVisuals(selected_year, selected_event_id, selected_session_id)
                 else:
                     plotter = None
 
@@ -113,7 +116,7 @@ def analysis(request):
         selected_year = request.GET.get("year")
         if selected_year:
             event_ids_with_sessions = Session.objects.values_list("event_id", flat=True).distinct()
-            available_events = Schedule.objects.filter(
+            available_events = Event.objects.filter(
                 season_year=selected_year, id__in=event_ids_with_sessions
             ).values("id", "name")
 
@@ -141,7 +144,7 @@ def analysis(request):
 @require_GET
 def get_events(request, year):
     event_ids_with_sessions = Session.objects.values_list("event_id", flat=True).distinct()
-    filtered_events = Schedule.objects.filter(season_year=year, id__in=event_ids_with_sessions).values("id", "name")
+    filtered_events = Event.objects.filter(season_year=year, id__in=event_ids_with_sessions).values("id", "name")
 
     return JsonResponse({"events": list(filtered_events)})
 
