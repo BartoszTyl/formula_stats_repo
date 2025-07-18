@@ -120,4 +120,4 @@ formula_stats_django/theme/
 ./static_src/
 
 # === .gitignore (optional: ignore itself if needed) ===
-.gitignore
+# .gitignore
