@@ -46,6 +46,7 @@ formula_stats_django/                      # Main Django project folder
 │   │   ├── about.html
 │   │   ├── analysis.html
 │   │   ├── base.html
+│   │   ├── machine_learning.html
 │   │   ├── drivers.html
 │   │   └── home.html
 │   ├── templatetags/                      # Custom Django template tags
@@ -70,6 +71,7 @@ formula_stats_django/                      # Main Django project folder
 │   │   ├── team_pace_lap_times.py
 │   │   ├── telemetry.py
 │   │   ├── tyres.py
+│   │   ├── performance.py
 │   │   └── weather.py
 │   ├── __init__.py
 │   └── apps.py
