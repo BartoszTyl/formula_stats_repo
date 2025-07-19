@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Machine Learning Hub{% endblock %}
+
+{% block content %}
+<div class="w-full bg-slate-900">
+
+    <!-- Hero Section -->
+    <div class="relative isolate overflow-hidden pt-14">
+        
+        <!-- Gradient Background -->
+        <div class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80" aria-hidden="true">
+            <div class="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-20 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]" style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)"></div>
+        </div>
+
+        <div class="mx-auto max-w-2xl py-24 sm:py-32">
+            <div class="text-center">
+                <h1 class="text-4xl font-bold tracking-tight text-white sm:text-6xl">The Future of F1 Analysis</h1>
+                <p class="mt-6 text-lg leading-8 text-gray-400">We're developing a suite of predictive models to bring you deeper insights into race strategy, driver performance, and more. This is where data meets the checkered flag, and unlocks deeper understanding of the world's fastest sport!</p>
+                <div class="mt-10 flex items-center justify-center gap-x-6">
+                    <a href="https://github.com/BartoszTyl/formula_stats_repo" target="_blank" class="text-sm font-semibold leading-6 text-white hover:text-gray-300">Follow development on GitHub <span aria-hidden="true">→</span></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Planned Features Section -->
+    <div class="mx-auto max-w-7xl px-6 lg:px-8 pb-24 sm:pb-32">
+        <div class="mx-auto max-w-2xl lg:text-center">
+            <h2 class="text-base font-semibold leading-7 text-cyan-400">Roadmap</h2>
+            <p class="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">Models Under Development</p>
+        </div>
+        
+        <div class="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-6 sm:mt-20 lg:mx-0 lg:max-w-none lg:grid-cols-2 lg:gap-8">
+
+            <div class="flex gap-x-6 rounded-2xl bg-white/5 p-6 ring-1 ring-inset ring-white/10">
+                <div>
+                    <h3 class="text-base font-semibold leading-7 text-white">Fastest Lap Predictor</h3>
+                    <p class="mt-2 text-sm leading-6 text-gray-400">Analyses qualifying and practice pace to forecast which driver is most likely to claim the fastest lap in the race.</p>
+                    <p class="mt-3 text-xs font-medium text-yellow-400">Status: Planned</p>
+                </div>
+            </div>
+
+            <div class="flex gap-x-6 rounded-2xl bg-white/5 p-6 ring-1 ring-inset ring-white/10">
+                <div>
+                    <h3 class="text-base font-semibold leading-7 text-white">Podium Finish Predictor</h3>
+                    <p class="mt-2 text-sm leading-6 text-gray-400">Uses grid position, team performance, and historical data to calculate the probability of each driver finishing in the top three.</p>
+                    <p class="mt-3 text-xs font-medium text-yellow-400">Status: Planned</p>
+                </div>
+            </div>
+
+            <div class="flex gap-x-6 rounded-2xl bg-white/5 p-6 ring-1 ring-inset ring-white/10">
+                <div>
+                    <h3 class="text-base font-semibold leading-7 text-white">Tyre Strategy Optimiser</h3>
+                    <p class="mt-2 text-sm leading-6 text-gray-400">Models tyre degradation based on track characteristics and compound data to suggest optimal pit stop windows and strategies.</p>
+                    <p class="mt-3 text-xs font-medium text-yellow-400">Status: Planned</p>
+                </div>
+            </div>
+
+            <div class="flex gap-x-6 rounded-2xl bg-white/5 p-6 ring-1 ring-inset ring-white/10">
+                <div>
+                    <h3 class="text-base font-semibold leading-7 text-white">Live Data Integration</h3>
+                    <p class="mt-2 text-sm leading-6 text-gray-400">Explore options to integrate near real-time telemetry and race data during live events for up-to-the-minute analysis.</p>
+                    <p class="mt-3 text-xs font-medium text-yellow-400">Status: Planned</p>
+                </div>
+            </div>
+
+            <div class="flex gap-x-6 rounded-2xl bg-white/5 p-6 ring-1 ring-inset ring-white/10">
+                <div>
+                    <h3 class="text-base font-semibold leading-7 text-white">Driver Comparison & Wheel Spin Detection</h3>
+                    <p class="mt-2 text-sm leading-6 text-gray-400">Compares drivers’ race starts and uses telemetry data to detect wheel spin incidents, giving insights into launch performance and traction.</p>
+                    <p class="mt-3 text-xs font-medium text-yellow-400">Status: Planned</p>
+                </div>
+            </div>
+
+            <div class="flex gap-x-6 rounded-2xl bg-white/5 p-6 ring-1 ring-inset ring-white/10">
+                <div>
+                    <h3 class="text-base font-semibold leading-7 text-white">And More...</h3>
+                    <p class="mt-2 text-sm leading-6 text-gray-400">Our roadmap includes models for qualifying performance, head-to-head driver comparison tools, and much more as the project evolves.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

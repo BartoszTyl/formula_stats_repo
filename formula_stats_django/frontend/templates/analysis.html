@@ -1,285 +1,264 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% load template_tags %}
 
 {% block title %}Analysis{% endblock %}
 
 {% block content %}
-<form method="POST" class="absolute top-16 left-0 w-full flex flex-col items-center gap-4 z-10">
-    {% csrf_token %}
+<div class="w-full min-h-full bg-slate-900">
 
-    <div class="text-slate-300 text-lg font-light">
-        Choose a session you want to visualise and press Load!
+    <!-- Header Section -->
+    <div class="relative isolate overflow-hidden pt-14">
+        
+        <!-- Gradient Background -->
+        <div class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80" aria-hidden="true">
+            <div class="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-20 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]" style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)"></div>
+        </div>
+        
+        <div class="mx-auto max-w-7xl px-6 lg:px-8 text-center py-12">
+            <h1 class="text-4xl font-bold tracking-tight text-white sm:text-5xl">Analysis Dashboard</h1>
+            <p class="mt-4 text-lg leading-8 text-gray-400">Select parameters to generate and visualize F1 data.</p>
+        </div>
     </div>
 
-    <div class="flex flex-wrap justify-center gap-4">
-        <select name="year" id="year-select" class="bg-slate-700 text-white p-2 rounded">
-            <option value="" disabled {% if not selected_year %}selected{% endif %}>Choose a year:</option>
-            {% for year in available_years %}
-                <option value="{{ year }}" {% if year|stringformat:"s" == selected_year %}selected{% endif %}>{{ year }}</option>
-            {% endfor %}
-        </select>
+    <!-- Main Content Area -->
+    <div class="mx-auto max-w-7xl px-6 lg:px-8 pb-24">
+        
+        <!-- Control Panel -->
+        <div class="rounded-2xl bg-white/5 p-6 ring-1 ring-inset ring-white/10">
+            <form method="POST" class="space-y-4">
+                {% csrf_token %}
+                <div class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-8 items-end">
+                    
+                    <!-- Main Dropdowns -->
+                    <div class="lg:col-span-1">
+                        <label for="year-select" class="block text-sm font-medium leading-6 text-white">Year</label>
+                        <select name="year" id="year-select" class="mt-2 block w-full rounded-md border-0 bg-white/5 py-2 px-3 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-cyan-500 sm:text-sm sm:leading-6">
+                            <option value="" disabled {% if not selected_year %}selected{% endif %}>Choose</option>
+                            {% for year in available_years %}
+                                <option value="{{ year }}" {% if year|stringformat:"s" == selected_year %}selected{% endif %}>{{ year }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
 
+                    <div class="lg:col-span-2">
+                        <label for="event-select" class="block text-sm font-medium leading-6 text-white">Event</label>
+                        <select name="event_id" id="event-select" class="mt-2 block w-full rounded-md border-0 bg-white/5 py-2 px-3 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-cyan-500 sm:text-sm sm:leading-6" {% if not available_events %}disabled{% endif %}>
+                            <option value="" disabled {% if not selected_event_id %}selected{% endif %}>Select</option>
+                            {% for event in available_events %}
+                                <option value="{{ event.id }}" {% if event.id|stringformat:"s" == selected_event_id %}selected{% endif %}>{{ event.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
 
-        <select name="event_id" id="event-select" class="bg-slate-700 text-white p-2 rounded" {% if not available_events %}disabled{% endif %}>
-            <option value="" disabled {% if not selected_event_id %}selected{% endif %}>Select an event:</option>
-            {% for event in available_events %}
-                <option value="{{ event.id }}" {% if event.id|stringformat:"s" == selected_event_id %}selected{% endif %}>{{ event.name }}</option>
-            {% endfor %}
-        </select>
+                    <div class="lg:col-span-1">
+                        <label for="session-select" class="block text-sm font-medium leading-6 text-white">Session</label>
+                        <select name="session_id" id="session-select" class="mt-2 block w-full rounded-md border-0 bg-white/5 py-2 px-3 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-cyan-500 sm:text-sm sm:leading-6" {% if not available_sessions %}disabled{% endif %}>
+                            <option value="" disabled {% if not selected_session_id %}selected{% endif %}>Select</option>
+                            {% for session in available_sessions %}
+                                <option value="{{ session.id }}" {% if session.id|stringformat:"s" == selected_session_id %}selected{% endif %}>{{ session.type }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
 
+                    <div class="lg:col-span-2">
+                        <label for="visuals-select" class="block text-sm font-medium leading-6 text-white">Visual</label>
+                        <select name="visual" id="visuals-select" class="mt-2 block w-full rounded-md border-0 bg-white/5 py-2 px-3 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-cyan-500 sm:text-sm sm:leading-6">
+                            <option value="" disabled {% if not selected_visual %}selected{% endif %}>Select</option>
+                            {% for visual in available_visuals %}
+                                <option value="{{ visual }}" {% if visual == selected_visual %}selected{% endif %}>{{ visual }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <!-- Telemetry Specific Dropdowns (Initially Hidden) -->
+                    <div id="driver-select-wrapper" class="lg:col-span-1 hidden">
+                        <label for="driver-select" class="block text-sm font-medium leading-6 text-white">Driver</label>
+                        <select name="driver" id="driver-select" class="mt-2 block w-full rounded-md border-0 bg-white/5 py-2 px-3 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-cyan-500 sm:text-sm sm:leading-6" disabled>
+                            <option value="" disabled selected>Select</option>
+                             {% for driver in available_drivers %}
+                                <option value="{{ driver.id }}" {% if driver.id|stringformat:"s" == selected_driver %}selected{% endif %}>{{ driver.abbreviation }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
 
-        <select name="session_id" id="session-select" class="bg-slate-700 text-white p-2 rounded" {% if not available_sessions %}disabled{% endif %}>
-            <option value="" disabled {% if not selected_session_id %}selected{% endif %}>Select a session:</option>
-            {% for session in available_sessions %}
-                <option value="{{ session.id }}" {% if session.id|stringformat:"s" == selected_session_id %}selected{% endif %}>{{ session.type }}</option>
-            {% endfor %}
-        </select>
+                    <div id="lap-select-wrapper" class="lg:col-span-1 hidden">
+                         <label for="lap-select" class="block text-sm font-medium leading-6 text-white">Lap</label>
+                        <select name="lap" id="lap-select" class="mt-2 block w-full rounded-md border-0 bg-white/5 py-2 px-3 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-cyan-500 sm:text-sm sm:leading-6" disabled>
+                            <option value="" disabled selected>Select</option>
+                            {% for lap in available_laps %}
+                                <option value="{{ lap.lap_number }}" {% if lap.lap_number|stringformat:"s" == selected_lap %}selected{% endif %}>{{ lap.lap_number }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
 
+                    <!-- Load Button -->
+                    <div class="lg:col-span-1 self-end">
+                        <button id="load-button" type="submit" class="w-full rounded-md bg-cyan-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-cyan-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            Load
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
 
-        <select name="visual" id="visuals-select" class="bg-slate-700 text-white p-2 rounded">
-            <option value="" disabled {% if not selected_visual %}selected{% endif %}>Select a visual:</option>
-            {% for visual in available_visuals %}
-                <option value="{{ visual }}" {% if visual == selected_visual %}selected{% endif %}>{{ visual }}</option>
-            {% endfor %}
-        </select>
-
-
-        <select name="driver" id="driver-select" class="bg-slate-700 text-white p-2 rounded hidden">
-            <option value="" disabled {% if not selected_visual %}selected{% endif %}>Select a driver:</option>
-            {% for driver in available_drivers %}
-                <option value="{{ driver.id }}" {% if driver.abbreviation == selected_driver %}selected{% endif %}>{{ driver.id }}</option>
-            {% endfor %}
-        </select>
-
-        <select name="lap" id="lap-select" class="bg-slate-700 text-white p-2 rounded hidden" {% if not available_laps %}disabled{% endif %}>
-            <option value="" disabled {% if not selected_lap %}selected{% endif %}>Select a lap:</option>
-            {% for lap in available_laps %}
-                <option value="{{ lap.number }}" {% if lap.number == selected_lap %}selected{% endif %}>{{ lap.number }}</option>1
-            {% endfor %}
-        </select>
-
-
-        <button id="load-button" type="submit" class="bg-blue-600 text-white hover:bg-blue-700 hover:text-slate-200 px-3 py-1 rounded" disabled>
-            Load
-        </button>
+        <!-- Plot Display Area -->
+        <div class="mt-8">
+            {% if plots %}
+                <div class="space-y-8">
+                    {% for plot in plots %}
+                        <div class="rounded-2xl bg-white/5 p-6 ring-1 ring-inset ring-white/10 text-center">
+                            <img
+                                id="{{ selected_visual_names|index:forloop.counter0 }}"
+                                src="data:image/png;base64,{{ plot }}"
+                                class="max-w-full h-auto rounded-lg shadow-2xl mx-auto"
+                            >
+                            <a
+                                href="data:image/png;base64,{{ plot }}"
+                                download="{{ selected_visual_names|index:forloop.counter0 }}_{{ selected_year }}_{{ event_name }}_{{ session_type }}.png"
+                                class="mt-6 inline-block rounded-md bg-gray-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-600 transition-colors"
+                            >
+                                Download {{ selected_visual_names|index:forloop.counter0|replace:"_, "|title }}
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-20">
+                    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-white/5">
+                        <svg class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v18M9.75 3v18M15.75 3v18M21.75 3v18M3.75 9h18M3.75 15h18" /></svg>
+                    </div>
+                    <h3 class="mt-2 text-sm font-semibold text-white">No Visual Generated</h3>
+                    <p class="mt-1 text-sm text-gray-500">Use the control panel above to generate a plot.</p>
+                </div>
+            {% endif %}
+        </div>
     </div>
-</form>
-
-
-{% if plots %}
-  <div class="mt-8 py-20 space-y-8">
-    {% for plot in plots %}
-      <div class="flex flex-col items-center">
-        <img
-          id="{{ selected_visual_names|index:forloop.counter0 }}"
-          src="data:image/png;base64,{{ plot }}"
-          class="max-w-full max-h-[80vh] rounded shadow"
-        >
-        <a
-          href="data:image/png;base64,{{ plot }}"
-          download="{{ selected_visual_names|index:forloop.counter0 }}_{{ selected_year }}_{{ event_name }}_{{ session_type }}.png"
-          class="mt-4 inline-block"
-        >
-          <button
-            type="button"
-            class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-          >
-            Download {{ selected_visual_names|index:forloop.counter0|replace:"_, "|title }}
-          </button>
-        </a>
-      </div>
-    {% endfor %}
-  </div>
-{% endif %}
+</div>
 
 <script>
-    // Your JavaScript does not need any changes and will continue to work correctly.
-    
+document.addEventListener("DOMContentLoaded", function() {
+    // --- DOM Elements ---
     const yearSelect = document.getElementById("year-select");
     const eventSelect = document.getElementById("event-select");
     const sessionSelect = document.getElementById("session-select");
     const visualSelect = document.getElementById("visuals-select");
     const driverSelect = document.getElementById("driver-select");
     const lapSelect = document.getElementById("lap-select");
+    const driverWrapper = document.getElementById("driver-select-wrapper");
+    const lapWrapper = document.getElementById("lap-select-wrapper");
     const loadButton = document.getElementById("load-button");
 
+    // --- Functions ---
     function updateButtonState() {
-        if (
+        let isTelemetryValid = true;
+        if (visualSelect.value === "Telemetry") {
+            isTelemetryValid = !!driverSelect.value && !!lapSelect.value;
+        }
+
+        loadButton.disabled = !(
             yearSelect.value &&
             eventSelect.value &&
             sessionSelect.value &&
-            visualSelect.value)
-            {loadButton.disabled = false;
-            } else {loadButton.disabled = true;}
+            visualSelect.value &&
+            isTelemetryValid
+        );
     }
 
-    if (visualSelect.value === "Telemetry") {
-            // Reset and show driver/lap selects
-            driverSelect.classList.remove("hidden");
-            lapSelect.classList.remove("hidden");
+    function populateDropdown(selectElement, data, defaultOptionText) {
+        selectElement.innerHTML = `<option value="" disabled selected>${defaultOptionText}</option>`;
+        data.forEach(item => {
+            const opt = document.createElement("option");
+            opt.value = item.id;
+            opt.textContent = item.name || item.type || item.abbreviation;
+            selectElement.appendChild(opt);
+        });
+        selectElement.disabled = false;
+    }
+    
+    function populateLapsDropdown(selectElement, data, defaultOptionText) {
+        selectElement.innerHTML = `<option value="" disabled selected>${defaultOptionText}</option>`;
+        data.forEach(item => {
+            const opt = document.createElement("option");
+            opt.value = item.lap_number;
+            opt.textContent = item.lap_number;
+            selectElement.appendChild(opt);
+        });
+        selectElement.disabled = false;
+    }
 
-            // Reset driverSelect
-            driverSelect.innerHTML = "";
-            const driverPlaceholder = document.createElement("option");
-            driverPlaceholder.value = "";
-            driverPlaceholder.textContent = "Select a driver:";
-            driverPlaceholder.disabled = true;
-            driverPlaceholder.selected = true;
-            driverSelect.appendChild(driverPlaceholder);
-
-            // Reset lapSelect
-            lapSelect.innerHTML = "";
-            const lapPlaceholder = document.createElement("option");
-            lapPlaceholder.value = "";
-            lapPlaceholder.textContent = "Select a lap:";
-            lapPlaceholder.disabled = true;
-            lapPlaceholder.selected = true;
-            lapSelect.appendChild(lapPlaceholder);
-            lapSelect.disabled = true;
-
-            fetch(`/ajax/get-drivers/${sessionSelect.value}/`)
-                .then(response => response.json())
-                .then(data => {
-                    data.drivers.forEach(driver => {
-                        const opt = document.createElement("option");
-                        opt.value = driver.id;
-                        opt.textContent = driver.abbreviation;
-                        driverSelect.appendChild(opt);
-                    });
-                });
-            }
-
+    // --- Event Listeners ---
     yearSelect.addEventListener("change", function () {
+        if (!this.value) return;
         fetch(`/get-events/${this.value}/`)
             .then(response => response.json())
             .then(data => {
-                // Populate event dropdown
-                eventSelect.innerHTML = "";
-                const placeholder = document.createElement("option");
-                placeholder.value = "";
-                placeholder.textContent = "Select an event:";
-                placeholder.disabled = true;
-                placeholder.selected = true;
-                eventSelect.appendChild(placeholder);
-
-                data.events.forEach(event => {
-                    const opt = document.createElement("option");
-                    opt.value = event.id;
-                    opt.textContent = event.name;
-                    eventSelect.appendChild(opt);
-                });
-
-                eventSelect.disabled = false;
+                populateDropdown(eventSelect, data.events, "Select");
+                sessionSelect.innerHTML = '<option value="" disabled selected>Select</option>';
                 sessionSelect.disabled = true;
                 updateButtonState();
             });
     });
 
     eventSelect.addEventListener("change", function () {
+        if (!this.value) return;
         fetch(`/get-sessions/${this.value}/`)
             .then(response => response.json())
             .then(data => {
-                sessionSelect.innerHTML = "";
-                const placeholder = document.createElement("option");
-                placeholder.value = "";
-                placeholder.textContent = "Select a session:";
-                placeholder.disabled = true;
-                placeholder.selected = true;
-                sessionSelect.appendChild(placeholder);
-    
-                data.sessions.forEach(session => {
-                    const opt = document.createElement("option");
-                    opt.value = session.id;
-                    opt.textContent = session.type;
-                    sessionSelect.appendChild(opt);
-                });
-
-                sessionSelect.disabled = false;
+                populateDropdown(sessionSelect, data.sessions, "Select");
                 updateButtonState();
             });
     });
 
-
     visualSelect.addEventListener("change", function () {
-        if (visualSelect.value === "Telemetry") {
-            // Reset and show driver/lap selects
-            driverSelect.classList.remove("hidden");
-            lapSelect.classList.remove("hidden");
-
-            // Reset driverSelect
-            driverSelect.innerHTML = "";
-            const driverPlaceholder = document.createElement("option");
-            driverPlaceholder.value = "";
-            driverPlaceholder.textContent = "Select a driver:";
-            driverPlaceholder.disabled = true;
-            driverPlaceholder.selected = true;
-            driverSelect.appendChild(driverPlaceholder);
-
-            // Reset lapSelect
-            lapSelect.innerHTML = "";
-            const lapPlaceholder = document.createElement("option");
-            lapPlaceholder.value = "";
-            lapPlaceholder.textContent = "Select a lap:";
-            lapPlaceholder.disabled = true;
-            lapPlaceholder.selected = true;
-            lapSelect.appendChild(lapPlaceholder);
-            lapSelect.disabled = true;
-
-            fetch(`/ajax/get-drivers/${sessionSelect.value}/`)
-                .then(response => response.json())
-                .then(data => {
-                    data.drivers.forEach(driver => {
-                        const opt = document.createElement("option");
-                        opt.value = driver.id;
-                        opt.textContent = driver.abbreviation;
-                        driverSelect.appendChild(opt);
+        if (this.value === "Telemetry") {
+            driverWrapper.classList.remove("hidden");
+            lapWrapper.classList.remove("hidden");
+            
+            if (sessionSelect.value) {
+                fetch(`/ajax/get-drivers/${sessionSelect.value}/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        populateDropdown(driverSelect, data.drivers, "Select");
                     });
-                });
-
-        } else {
-            // Hide and reset driver/lap selects
-            driverSelect.classList.add("hidden");
-            lapSelect.classList.add("hidden");
+            }
+            lapSelect.innerHTML = '<option value="" disabled selected>Select</option>';
             lapSelect.disabled = true;
-            driverSelect.innerHTML = "";
-            lapSelect.innerHTML = "";
+        } else {
+            driverWrapper.classList.add("hidden");
+            lapWrapper.classList.add("hidden");
+            driverSelect.value = '';
+            lapSelect.value = '';
+            driverSelect.disabled = true;
+            lapSelect.disabled = true;
         }
-
         updateButtonState();
-
     });
 
     driverSelect.addEventListener("change", function () {
+        if (!this.value || !sessionSelect.value) return;
         fetch(`/ajax/get-laps/${sessionSelect.value}/${this.value}/`)
             .then(response => response.json())
             .then(data => {
-                lapSelect.innerHTML = "";
-                const placeholder = document.createElement("option");
-                placeholder.value = "";
-                placeholder.textContent = "Select a lap:";
-                placeholder.disabled = true;
-                placeholder.selected = true;
-
-                lapSelect.append(placeholder);
-
-                data.laps.forEach(lap => {
-                    const opt = document.createElement("option");
-                    opt.value = lap.id;
-                    opt.textContent = lap.lap_number;
-                    lapSelect.appendChild(opt);
-                });
-
-                lapSelect.disabled = false;
+                populateLapsDropdown(lapSelect, data.laps, "Select");
                 updateButtonState();
-
             });
     });
 
-    [yearSelect, eventSelect, sessionSelect, visualSelect, driverSelect, lapSelect].forEach(select =>
-        select.addEventListener("change", updateButtonState)
-    );
+    [sessionSelect, lapSelect].forEach(el => el.addEventListener("change", updateButtonState));
 
+    // --- Initial Page Load Logic ---
+    function initializeForm() {
+        if (visualSelect.value === "Telemetry") {
+            driverWrapper.classList.remove("hidden");
+            lapWrapper.classList.remove("hidden");
+            driverSelect.disabled = false;
+            lapSelect.disabled = false;
+        }
+        updateButtonState();
+    }
+
+    initializeForm();
+});
 </script>
-
 {% endblock %}

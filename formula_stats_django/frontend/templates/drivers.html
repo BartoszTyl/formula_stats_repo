@@ -1,32 +1,55 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Drivers{% endblock %}
 
 {% block content %}
+<div class="w-full min-h-full bg-slate-900">
 
-
-<div class="max-w-4xl mx-auto px-4 py-8">
-    <h2 class="text-2xl font-bold text-center mb-6">All Available Drivers</h2>
-        <div class="text-center">
-            <div class="inline-block bg-blue-600 text-white text-lg font-semibold py-3 px-6 rounded-xl shadow">
-                More details coming soon!
-            </div>        
+    <!-- Header Section -->
+    <div class="relative isolate overflow-hidden pt-14">
+        
+        <!-- Gradient Background -->
+        <div class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl pointer-events-none sm:-top-80" aria-hidden="true">
+            <div class="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-20 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]" style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)"></div>
         </div>
-    <p class="text-center text-lg text-slate-500 my-4">
-        This list includes all drivers who have taken part in any Formula 1 session — practice, qualifying, race, etc. and are present in the database.
-    </p>
+        
+        <div class="mx-auto max-w-7xl px-6 lg:px-8 text-center py-12">
+            <h1 class="text-4xl font-bold tracking-tight text-white sm:text-5xl">Driver Directory</h1>
+            <p class="mt-4 text-lg leading-8 text-gray-400">Every driver in the databse who has participated in an F1 session.</p>
+        </div>
+    </div>
 
-    <ul class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-12">
-        {% for driver in available_drivers %}
-            <li class="bg-slate-100 rounded-xl shadow-md p-4 text-center">
-                <span class="block text-xl font-medium text-slate-800">
-                    {{ driver.first_name }} {{ driver.last_name }}
-                </span>
-                <span class="text-slate-500 text-sm tracking-wide">
-                    ({{ driver.abbreviation }})
-                </span>
-            </li>
-        {% endfor %}
-    </ul>
+    <!-- Main Content Area -->
+    <div class="mx-auto max-w-7xl px-6 lg:px-8 pb-24">
+        <!-- Driver Grid -->
+        <ul class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+            {% for driver in available_drivers %}
+                <li>
+                    <div class="group relative w-full h-28 text-center rounded-2xl bg-slate-800/50 ring-1 ring-white/10 overflow-hidden transition-all duration-300 ease-in-out hover:ring-cyan-400/50">
+
+                        <div class="relative z-10 flex flex-col items-center justify-center h-full p-4">
+                            <!-- Driver Number -->
+                            <div class="text-5xl font-black text-white/80 transition-colors group-hover:text-white">
+                                {{ driver.driver_number }}
+                            </div>
+                            
+                            <!-- Driver Name -->
+                            <p class="mt-2 text-lg font-bold text-white leading-tight truncate">
+                                {{ driver.first_name }} {{ driver.last_name }}
+                            </p>
+                            
+                            <!-- Driver Abbreviation -->
+                            <p class="text-sm font-mono text-gray-400">
+                                {{ driver.abbreviation }}
+                            </p>
+                        </div>
+                    </div>
+                </li>
+            {% empty %}
+                <p class="col-span-full text-center text-gray-400 py-12">No drivers found in the database.</p>
+            {% endfor %}
+        </ul>
+    </div>
 </div> 
 {% endblock %}

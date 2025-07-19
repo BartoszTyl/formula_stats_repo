@@ -163,3 +163,7 @@ def get_drivers(request, session_id):
 def get_laps(request, session_id, driver_id):
     laps = Lap.objects.filter(session_id=session_id, driver_id=driver_id).values("lap_number", "id").order_by("lap_number").distinct()
     return JsonResponse({"laps": list(laps)})
+
+
+def machine_learning(request):
+    return render(request, "machine_learning.html")
