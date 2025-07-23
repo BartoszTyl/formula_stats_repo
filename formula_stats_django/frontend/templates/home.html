@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Drivers{% endblock %}
+{% block title %}Formula Stats{% endblock %}
 
 {% block content %}
 <div class="w-full bg-slate-900">
@@ -19,7 +19,7 @@
                 <h1 class="text-4xl font-bold tracking-tight text-white sm:text-6xl">Unlock the Data.<br>Understand the Race.</h1>
                 <p class="mt-6 text-lg leading-8 text-gray-400">An open-source toolkit for exploring Formula 1 data. Go beyond the broadcast with detailed visualisations, telemetry analysis, and predictive insights.</p>
                 <div class="mt-10 flex items-center justify-center gap-x-6">
-                    <a href="{% url 'analysis' %}" class="rounded-md bg-cyan-600 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-cyan-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600 transition-colors">Launch Analysis Tools</a>
+                    <a href="{% url 'analysis' %}" class="rounded-md bg-cyan-600 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-cyan-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600 transition-colors">Start Analysis</a>
                     <a href="{% url 'about' %}" class="text-sm font-semibold leading-6 text-white hover:text-gray-300">Learn more <span aria-hidden="true">→</span></a>
                 </div>
             </div>

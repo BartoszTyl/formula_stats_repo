@@ -70,7 +70,10 @@ class TelemetryVisuals:
     def _process_data(self) -> None:
         """Process fetched data and make it a pandas dataframe"""
         telemetry_df = pd.DataFrame(self._raw_telemetry)
+        print("Raw telemetry drs values:" + telemetry_df['drs'].unique())
+        telemetry_df['drs'] = pd.to_numeric(telemetry_df['drs'])
         telemetry_df['drs'] = telemetry_df['drs'].apply(drs_to_boolean)
+        print(telemetry_df['drs'].unique())
     
         constructor_id = self._raw_results[0]['constructor']
         
@@ -220,7 +223,7 @@ class TelemetryVisuals:
         
         points = np.array([x, y]).T.reshape(-1, 1, 2)
         segments = np.concatenate([points[:-1], points[1:]], axis=1)
-        gear = self.telemetry_df['speed'].to_numpy().astype(float)
+        speed = self.telemetry_df['speed'].to_numpy().astype(float)
         
         # Rotation matrix for counter-clockwise rotation
         angle_rad = np.deg2rad(-self._raw_event_details.circuit.rotation)
@@ -236,7 +239,7 @@ class TelemetryVisuals:
         
         cmap = colormaps['viridis']
         lc_comp = LineCollection(rotated_segments, cmap=cmap)
-        lc_comp.set_array(gear)
+        lc_comp.set_array(speed)
         lc_comp.set_linewidth(6)
         
         fig, ax = plt.subplots(figsize=(10, 8), dpi=300)

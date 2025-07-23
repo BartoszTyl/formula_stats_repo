@@ -30,8 +30,7 @@ def format_lap_time(ms: int) -> str:
     return formatted_time
 
 
-
-
+    
 def drs_to_boolean(drs_value) -> bool:
     """Convert DRS value to boolean"""
     

@@ -18,6 +18,8 @@ from django.core.management.base import BaseCommand
 
 # * python manage.py import_fastf1_data --year 2024 --event Australia
 
+# TODO change the datatype of drs to boolean
+
 logger = logging.getLogger(__name__)
 
 class Command(BaseCommand):
@@ -46,7 +48,8 @@ class Command(BaseCommand):
         for _, row in ff1.get_event_schedule(year).iterrows():
             sessions = row[["Session1", "Session2", "Session3", "Session4", "Session5"]].tolist()
             sessions = [session for session in sessions if session != "None"]
-            self.event_sessions[row["EventName"]] = sessions
+        # Took this out of the for loop test if this works fine
+        self.event_sessions[row["EventName"]] = sessions
         
         self.matched_event = process.extractOne(event, list(self.event_sessions.keys()))[0]
         
@@ -81,6 +84,7 @@ class Command(BaseCommand):
         
         
         for i, sess in enumerate(self.event_sessions[self.matched_event], start=1):
+            print(i, sess)
             loaded_session = ff1.get_session(year, event, sess)
             loaded_session.load()
             self.populate_drivers(year, loaded_session)
@@ -255,15 +259,32 @@ class Command(BaseCommand):
         
     
     # Populate laps
-    def populate_laps(self, year:int, session: Session) -> Lap:
+    def populate_laps(self, year: int, session: Session) -> Lap:
         for _, row in session.laps.iterrows():
             driver_name = plotting.get_driver_name(row["Driver"], session).split()
             first_name, last_name = driver_name[0], driver_name[-1]
             
-            driver = Driver.objects.get(
-                first_name=first_name,
-                last_name=last_name
-            )
+            # Try exact match first
+            try:
+                driver = Driver.objects.get(first_name=first_name, last_name=last_name)
+            except Driver.DoesNotExist:
+                # Fuzzy match fallback
+                print(f"[WARNING] No exact match for: '{first_name} {last_name}'. Trying fuzzy match...")
+
+                # Fetch all drivers for the year
+                all_drivers = Driver.objects.filter(first_name=first_name)
+                all_last_names = list(all_drivers.values_list("last_name", flat=True))
+                
+                # Use rapidfuzz to get the closest match
+                match, score, _ = process.extractOne(last_name, all_last_names)
+
+                if match and score > 85:
+                    print(f"[INFO] Fuzzy matched last name '{last_name}' -> '{match}' (score={score})")
+                    driver = all_drivers.get(last_name=match)
+                else:
+                    print(f"[ERROR] No close match found for: '{first_name} {last_name}', year={year}")
+                    raise Driver.DoesNotExist(f"No match found for '{first_name} {last_name}'")
+
 
             Lap.objects.get_or_create(
                 session=self.session_obj,
