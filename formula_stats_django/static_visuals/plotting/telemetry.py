@@ -70,10 +70,10 @@ class TelemetryVisuals:
     def _process_data(self) -> None:
         """Process fetched data and make it a pandas dataframe"""
         telemetry_df = pd.DataFrame(self._raw_telemetry)
-        print("Raw telemetry drs values:" + telemetry_df['drs'].unique())
-        telemetry_df['drs'] = pd.to_numeric(telemetry_df['drs'])
+        
+        # telemetry_df['drs'] = pd.to_numeric(telemetry_df['drs'])
         telemetry_df['drs'] = telemetry_df['drs'].apply(drs_to_boolean)
-        print(telemetry_df['drs'].unique())
+        
     
         constructor_id = self._raw_results[0]['constructor']
         
@@ -85,7 +85,6 @@ class TelemetryVisuals:
         self.telemetry_df = telemetry_df
         
         
-    # TODO change the way driver names is added to the title of the plot make it a name instead of a abbreviation
     @plot_name("telemetry_plot")
     def telemetry_plot(self) -> str:
         label = self.driver_abbreviation

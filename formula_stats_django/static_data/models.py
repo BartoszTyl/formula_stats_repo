@@ -21,7 +21,6 @@ of the foreign keys.
 
 """
 
-# TODO Change the format in the Schedule model from charfield to integer or bool (0 - convetional, 1 - sprint)
 
 class Season(models.Model):
     year = models.IntegerField(primary_key=True)  # Year
@@ -151,7 +150,7 @@ class Telemetry(models.Model):
     n_gear = models.IntegerField(null=True)
     throttle = models.FloatField(null=True)
     brake = models.BooleanField(null=True)
-    drs = models.CharField(null=True)
+    drs = models.IntegerField(null=True)
     source = models.CharField(max_length=100, null=True)
     status = models.CharField(null=True)
     x = models.FloatField(null=True)
