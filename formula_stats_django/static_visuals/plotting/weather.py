@@ -53,7 +53,7 @@ class WeatherVisuals:
     
     
     @plot_name('weather_data')
-    def plot_weather_data(self):
+    def weather_data(self):
         elements_to_plot = ["Air Temp", "Track Temp", "Rainfall", "Wind Speed", "Wind Direction", "Air Pressure", "Relative Humidity"]
         
         plot_data = {
