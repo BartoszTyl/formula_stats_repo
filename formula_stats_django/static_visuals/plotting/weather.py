@@ -1,4 +1,4 @@
-from . import format_lap_time, add_watermark
+from . import add_watermark, plot_name, register_plots
 
 import matplotlib
 matplotlib.use("Agg")
@@ -12,16 +12,7 @@ import base64
 from static_data.models import Event, Session, Weather
 
 
-
-# Decorator to add name to the plots
-def plot_name(name):
-    def decorator(func):
-        func.plot_name = name
-        return func
-    return decorator
-
-
-
+@register_plots
 class WeatherVisuals:
     """
     Generate weather visuals to chosen sesion
@@ -31,7 +22,6 @@ class WeatherVisuals:
         event_id (int): ID of the event.
         session_id (int): ID of the session.
     """
-    PLOT_METHODS = ['plot_weather_data']
     
     def __init__(self, year: int, event_id: int, session_id: int):
     

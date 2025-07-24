@@ -1,4 +1,4 @@
-from . import format_lap_time, add_watermark, SNS_BOXPLOT_STYLE
+from . import format_lap_time, add_watermark, SNS_BOXPLOT_STYLE, plot_name, register_plots
 
 import matplotlib
 matplotlib.use("Agg")
@@ -15,13 +15,30 @@ import base64
 
 from static_data.models import Result, Lap, ConstructorColor, Constructor, Event, Session, TyreCompounds, Driver
 
-def plot_name(name):
-    def decorator(func):
-        func.plot_name = name
-        return func
-    return decorator
+# def plot_name(name):
+#     def decorator(func):
+#         func.plot_name = name
+#         return func
+#     return decorator
+
+# def register_plots(cls):
+#     """
+#     A class decorator that automatically finds methods decorated with @plot_name
+#     and populates a PLOT_METHODS list on the class.
+#     """
+#     cls.PLOT_METHODS = []
+#     # Inspect every attribute of the class
+#     for attr_name in dir(cls):
+#         # Get the attribute itself
+#         attr = getattr(cls, attr_name)
+#         # Check if it's a callable method and has our 'plot_name' tag
+#         if callable(attr) and hasattr(attr, 'plot_name'):
+#             cls.PLOT_METHODS.append(attr.plot_name)
+            
+#     return cls
 
 
+@register_plots
 class DriverLapVisuals:
     """
     Generate visualizations of lap time performance by constructor.
@@ -33,7 +50,10 @@ class DriverLapVisuals:
         
     """
     
-    PLOT_METHODS = ['lap_time_distribution']
+    # PLOT_METHODS = [
+    #     'lap_time_distribution',
+    #     'point_scorers_laps'
+    #     ]
     
     def __init__(self, year: int, event_id: int, session_id: int):
         # Initialise basic parameters
@@ -116,7 +136,7 @@ class DriverLapVisuals:
         
         
         
-    @plot_name('driver_lap_time_distribution')
+    @plot_name('lap_time_distribution')
     def lap_time_distribution(self) -> str:
         fig, ax = plt.subplots(figsize=(12.8, 8), dpi=300)
         sns.boxplot(

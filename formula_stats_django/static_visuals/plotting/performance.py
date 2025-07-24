@@ -1,4 +1,4 @@
-from . import add_watermark
+from . import add_watermark, plot_name, register_plots
 
 from collections import defaultdict
 
@@ -11,17 +11,10 @@ import base64
 
 from static_data.models import Event, Session, Telemetry, Constructor, ConstructorColor, Lap, Result
 
-def plot_name(name):
-    def decorator(func):
-        func.plot_name = name
-        return func
-    return decorator
 
 
+@register_plots
 class PerformanceVisuals:
-    PLOT_METHODS = [
-    'team_speed_comparison'
-    ]
     
     def __init__(self, year: int, event_id: int, session_id: int):
         # Initialise basic parameters

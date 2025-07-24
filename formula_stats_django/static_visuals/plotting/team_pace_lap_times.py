@@ -1,4 +1,4 @@
-from . import format_lap_time, add_watermark, SNS_BOXPLOT_STYLE
+from . import format_lap_time, add_watermark, SNS_BOXPLOT_STYLE, plot_name, register_plots
 
 import matplotlib
 matplotlib.use("Agg")
@@ -14,13 +14,7 @@ import base64
 
 from static_data.models import Result, Lap, ConstructorColor, Constructor, Event, Session, TyreCompounds
 
-def plot_name(name):
-    def decorator(func):
-        func.plot_name = name
-        return func
-    return decorator
-
-
+@register_plots
 class TeamLapVisuals:
     """
     Generate visualizations of lap time performance by constructor.
@@ -31,10 +25,6 @@ class TeamLapVisuals:
         session_id (int): ID of the session.
         
     """
-    
-    PLOT_METHODS = ['lap_time_distribution',
-                    'avg_lap_pace_comparison',
-                    'fast_lap_pace_comparison']
     
     def __init__(self, year: int, event_id: int, session_id: int):
         # Initialise basic parameters
@@ -131,7 +121,7 @@ class TeamLapVisuals:
         
         
         
-    @plot_name("team_lap_times_distribution")
+    @plot_name("lap_time_distribution")
     def lap_time_distribution(self) -> str:
         # Create the plot
         fig, ax = plt.subplots(figsize=(12.8, 9), dpi=300)
@@ -183,7 +173,7 @@ class TeamLapVisuals:
     
     
     @plot_name("team_avg_pace_comparison")
-    def avg_lap_pace_comparison(self) -> str:
+    def team_avg_pace_comparison(self) -> str:
         results_df = self.results_df.groupby("constructor_name").agg({
                 "perc_diff_avg_lap": 'first',
                 "constructor_avg_lap": 'first',
@@ -239,7 +229,7 @@ class TeamLapVisuals:
     
     
     @plot_name("team_fast_pace_comparison")
-    def fast_lap_pace_comparison(self) -> str:
+    def team_fast_pace_comparison(self) -> str:
         results_df = self.results_df.groupby("constructor_name").agg({
                 "perc_diff_fast_lap": 'first',
                 "constructor_fast_lap": 'first',

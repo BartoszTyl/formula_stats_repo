@@ -1,4 +1,4 @@
-from . import format_lap_time, add_watermark, SNS_BOXPLOT_STYLE
+from . import add_watermark, plot_name, register_plots
 
 import matplotlib
 matplotlib.use("Agg")
@@ -15,15 +15,8 @@ import base64
 
 from static_data.models import Lap, TyreCompounds, Session, Event
 
-def plot_name(name):
-    def decorator(func):
-        func.plot_name = name
-        return func
-    return decorator
-
-
+@register_plots
 class TyreVisuals:
-    PLOT_METHODS = ['track_tyre_evolution']
     def __init__(self, year: int, event_id: int, session_id: int):
         # Initialise basic parameters
         self.year = year
