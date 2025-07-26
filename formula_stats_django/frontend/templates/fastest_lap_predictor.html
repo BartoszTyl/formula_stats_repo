@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}Fastest Lap Predictor{% endblock %}
+
+{% block content %}
+<div class="w-full bg-slate-900 min-h-screen flex items-top">
+
+    <div class="relative isolate overflow-hidden w-full">
+        
+        <div class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80" aria-hidden="true">
+            <div class="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-20 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]" style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)"></div>
+        </div>
+
+        <div class="mx-auto max-w-4xl px-6 py-24 sm:py-32 lg:px-8">
+            <div class="text-center">
+                <h1 class="text-4xl font-bold tracking-tight text-white sm:text-6xl">Fastest Lap Predictor</h1>
+                <p class="mt-6 text-lg leading-8 text-gray-300">
+                    Select a season and event to calculate the fastest lap probabilities.
+                </p>
+
+                <form method="POST" id="prediction-form" class="mt-10">
+                    {% csrf_token %}
+                    <div class="mx-auto max-w-2xl">
+                        <div class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-12 items-end">
+                            
+                            <div class="sm:col-span-5">
+                                <label for="year-select" class="block text-sm font-medium leading-6 text-white text-left">Season</label>
+                                <select name="year" id="year-select" class="mt-2 block w-full rounded-md border-0 bg-white/5 py-2.5 px-3 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-cyan-500 sm:text-sm sm:leading-6 transition">
+                                    <option value="" disabled {% if not selected_year %}selected{% endif %}>Choose Year</option>
+                                    {% for year in available_years %}
+                                        <option value="{{ year }}" {% if year|stringformat:"s" == selected_year %}selected{% endif %}>{{ year }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="sm:col-span-5">
+                                <label for="event-select" class="block text-sm font-medium leading-6 text-white text-left">Event</label>
+                                <select name="event_id" id="event-select" class="mt-2 block w-full rounded-md border-0 bg-white/5 py-2.5 px-3 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-cyan-500 sm:text-sm sm:leading-6 transition" {% if not available_events %}disabled{% endif %}>
+                                    <option value="" disabled {% if not selected_event_id %}selected{% endif %}>Select Event</option>
+                                    {% for event in available_events %}
+                                        <option value="{{ event.id }}" {% if event.id|stringformat:"s" == selected_event_id %}selected{% endif %}>{{ event.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <div class="sm:col-span-2">
+                                <button type="submit" class="w-full rounded-md bg-cyan-500 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-cyan-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-500 transition-colors duration-300">
+                                    Predict
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]" aria-hidden="true">
+            <div class="relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-20 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]" style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- DOM Elements ---
+        const yearSelect = document.getElementById('year-select');
+        const eventSelect = document.getElementById('event-select');
+        const predictButton = document.querySelector('button[type="submit"]');
+
+        /**
+         * Populates a dropdown select element with a list of items.
+         * @param {HTMLSelectElement} dropdown The dropdown element to populate.
+         * @param {Array} items The array of objects to use for options.
+         * @param {string} defaultText The placeholder text for the first option.
+         */
+        function populateDropdown(dropdown, items, defaultText) {
+            dropdown.innerHTML = `<option value="" disabled selected>${defaultText}</option>`;
+            if (items && items.length > 0) {
+                items.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.id;
+                    option.textContent = item.name;
+                    dropdown.appendChild(option);
+                });
+                dropdown.disabled = false;
+            } else {
+                dropdown.disabled = true;
+            }
+        }
+
+        /**
+         * Checks if the form is ready to be submitted and enables/disables the button.
+         */
+        function updateButtonState() {
+            const isYearSelected = yearSelect.value !== "";
+            const isEventSelected = eventSelect.value !== "";
+            predictButton.disabled = !(isYearSelected && isEventSelected);
+        }
+
+        // --- Event Listeners ---
+        yearSelect.addEventListener("change", function () {
+            // Disable event dropdown until data is loaded
+            eventSelect.innerHTML = '<option value="" disabled selected>Loading events...</option>';
+            eventSelect.disabled = true;
+            updateButtonState();
+
+            if (!this.value) return;
+
+            // Fetch events for the selected year
+            fetch(`/get-events/${this.value}/`)
+                .then(response => response.json())
+                .then(data => {
+                    populateDropdown(eventSelect, data.events, "Select Event");
+                    updateButtonState();
+                })
+                .catch(error => {
+                    console.error("Error fetching events:", error);
+                    eventSelect.innerHTML = '<option value="" disabled selected>Error loading</option>';
+                });
+        });
+
+        // Update button state when event selection changes
+        eventSelect.addEventListener("change", updateButtonState);
+
+        // Initial state check on page load
+        updateButtonState();
+    });
+</script>
+
+{% endblock %}

@@ -25,10 +25,12 @@ Planned features include:
 
 ## 🛠 Tech Stack
 
-- **Backend**: Python 3, Django, FastF1
-- **Frontend**: Tailwind CSS, Django-HTML templates
+- **Backend**: Python, Django, FastF1
+- **Frontend**: Tailwind CSS, Django-HTML
 - **Database**: PostgreSQL
-- **Other**: Django management commands, Matplotlib, Seaborn, Pandas, Numpy
+- **Analysis**: Pandas, NumPy
+- **Visualisations**: Matplotlib, Seaborn
+- **Other**: Django management commands
 
 ## 🧱 Project Structure
 

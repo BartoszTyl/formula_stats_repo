@@ -167,3 +167,32 @@ def get_laps(request, session_id, driver_id):
 
 def machine_learning(request):
     return render(request, "machine_learning.html")
+
+
+def fastest_lap_predictor(request):
+    available_years = Season.objects.values_list("year", flat=True).distinct().order_by("-year")
+    
+    available_events = []
+    
+    if request.method == "POST":
+        selected_year = request.POST.get("year")
+        
+        if selected_year:
+            event_ids_with_sessions = Session.objects.values_list("event_id", flat=True).distinct()
+            available_events = Event.objects.filter(
+                season_year=selected_year, id__in=event_ids_with_sessions
+            ).values("id", "name")
+    else:
+        # Handle GET with filtering
+        selected_year = request.GET.get("year")
+        if selected_year:
+            event_ids_with_sessions = Session.objects.values_list("event_id", flat=True).distinct()
+            available_events = Event.objects.filter(
+                season_year=selected_year, id__in=event_ids_with_sessions
+            ).values("id", "name")
+    
+    context = {
+        'available_years': available_years,
+        'available_events': available_events
+    }
+    return render(request, "fastest_lap_predictor.html", context)

@@ -16,6 +16,8 @@
             ],
           }
         </script>
+
+        <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
     </head>
 
     <body class="h-full bg-slate-900 text-slate-100 font-sans leading-relaxed flex flex-col">
@@ -30,7 +32,28 @@
                 </div>
                 <div class="hidden lg:flex lg:gap-x-12">
                     <a href="{% url 'analysis' %}" class="text-lg font-semibold leading-6 text-white hover:text-gray-300">Analysis</a>
-                    <a href="{% url 'machine_learning' %}" class="text-lg font-semibold leading-6 text-white hover:text-gray-300">Machine Learning</a>
+                    
+                    <div 
+                        x-data="{ open: false }" 
+                        @mouseenter="open = true" 
+                        @mouseleave="open = false" 
+                        class="relative"
+                    >
+                        <button class="flex items-center gap-x-1 text-lg font-semibold leading-6 text-white hover:text-gray-300 focus:outline-none">
+                            <a href="{% url 'machine_learning' %}"><span>Machine Learning</span></a>
+                            <svg class="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+
+                        <div 
+                            x-show="open"
+                            x-transition
+                            class="absolute -left-8 top-full z-10 mt-3 w-56 rounded-xl bg-slate-800 p-2 shadow-lg ring-1 ring-gray-900/5"
+                        >
+                            <a href="{% url 'fastest_lap_predictor' %}" class="block rounded-lg px-3 py-2 text-sm font-semibold leading-6 text-slate-200 hover:bg-slate-700">Fastest Lap Predictor</a>
+                        </div>
+                    </div>
                     <a href="{% url 'drivers' %}" class="text-lg font-semibold leading-6 text-white hover:text-gray-300">Drivers</a>
                     <a href="{% url 'about' %}" class="text-lg font-semibold leading-6 text-white hover:text-gray-300">About</a>
                 </div>

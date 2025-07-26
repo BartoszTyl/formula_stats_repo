@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     "theme",
     "static_data",
     "static_visuals",
-    "frontend"
+    "frontend",
+    "machine_learning"
 ]
 
 MIDDLEWARE = [
